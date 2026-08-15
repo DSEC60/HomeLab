@@ -411,7 +411,7 @@ Selected data sources may be sent to more than one platform when a lab exercise 
 
 # 12. Identity and Windows Enterprise Services
 
-The lab can include a Windows Active Directory environment to practice enterprise identity administration and defensive monitoring. Typical exercises include user and group provisioning, Organizational Units, Group Policy, Kerberos, DNS, service accounts, password policy, account lockout, least privilege, and security auditing.
+The lab will include a Windows Active Directory environment to practice enterprise identity administration and defensive monitoring. Typical exercises include user and group provisioning, Organizational Units, Group Policy, Kerberos, DNS, service accounts, password policy, account lockout, least privilege, and security auditing.
 
 Microsoft cloud services may be integrated for hybrid identity or endpoint-management exercises, including Microsoft Entra ID, Microsoft 365, Exchange Online, Azure, Intune, Conditional Access, and multi-factor authentication where available.
 
@@ -453,7 +453,7 @@ The lab is designed to support a repeatable vulnerability-management lifecycle r
 
 **9.** Document the remediation and verification result.
 
-# 15. Security Testing and Blue-Team Validation
+# 15. Security Testing and Blue Team Validation
 
 Security testing should remain limited to systems owned by or explicitly authorized for the homelab. The preferred workflow uses controlled offensive activity to validate defensive visibility and response.
 
