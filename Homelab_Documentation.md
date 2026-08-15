@@ -64,7 +64,7 @@ This document describes the architecture and operating model of a home cybersecu
 | Windows and Linux systems   | Endpoints and servers used for administration, security monitoring, and testing.                                                                                           |
 | Kali Linux / security tools | Authorized security testing, traffic analysis, scanning, and defensive validation.                                                                                         |
 
-Note: VLAN IDs, IP ranges, and some workloads in this document are presented as a recommended or example design when exact production values have not yet been fixed. Those entries should be updated when the final addressing plan is implemented.
+Note: VLAN IDs, IP ranges, and some workloads in this document are presented as a recommended or  design when exact production values have not yet been fixed. Those entries should be updated when the final addressing plan is implemented.
 
 # 3. Physical Network Architecture
 
@@ -115,7 +115,7 @@ The managed switch provides wired connectivity and VLAN assignment for servers a
 
 Network segmentation is used to reduce lateral movement, separate administrative traffic from user traffic, and isolate intentionally vulnerable or untrusted systems. The following table is a recommended logical design and can be adjusted to match the final addressing plan.
 
-| **VLAN / Zone** | **Example ID** | **Example Subnet** | **Purpose**                                                                    |
+| **VLAN / Zone** | ** ID** | ** Subnet** | **Purpose**                                                                    |
 |-----------------|----------------|--------------------|--------------------------------------------------------------------------------|
 | Management      | 10             | 192.168.10.0/24    | Network devices, Proxmox management, iLO, and other administrative interfaces. |
 | Servers         | 20             | 192.168.20.0/24    | Physical and virtual servers providing infrastructure and security services.   |
@@ -158,7 +158,7 @@ The preferred network-security model is default-deny for inter-VLAN traffic. Acc
 | Isolated Lab | Trusted RFC1918 networks | Deny               | Contains vulnerable or compromised systems.                           |
 | Isolated Lab | Internet                 | Deny by default    | Enable temporarily only when required by an exercise.                 |
 
-## 5.1 Example Rule Order
+## 5.1  Rule Order
 
 **1.** Allow established and related sessions.
 
@@ -224,7 +224,7 @@ The lab contains four physical servers that provide compute resources for virtua
 
 A VLAN-aware Linux bridge, such as vmbr0, can carry multiple logical networks from the UniFi switch to each Proxmox host. Individual virtual machines are assigned VLAN tags according to their function and trust level.
 
-| **Example VLAN Tag** | **Assigned Workloads**                           |
+| ** VLAN Tag** | **Assigned Workloads**                           |
 |----------------------|--------------------------------------------------|
 | 10                   | Management interfaces where appropriate          |
 | 20                   | Server workloads                                 |
@@ -240,7 +240,7 @@ One server configuration under consideration uses eight 1 TB drives. RAID 6 can 
 
 The environment can host a mixture of Windows and Linux systems. The following names provide a consistent convention and can be adjusted as actual systems are deployed.
 
-| **System** | **Example Role**                                                                                             |
+| **System** | ** Role**                                                                                             |
 |------------|--------------------------------------------------------------------------------------------------------------|
 | DC01       | Primary Windows Server domain controller and DNS.                                                            |
 | DC02       | Secondary domain controller / DNS redundancy.                                                                |
@@ -283,7 +283,7 @@ Security Systems ------/            |
                                      +----> Alerts / Investigation / Response
 ```
 
-## 9.3 Example Detection and Investigation Use Cases
+## 9.3  Detection and Investigation Use Cases
 - Repeated failed authentication attempts and brute-force behavior.
 - Unexpected privileged-account activity.
 - Suspicious PowerShell or command-line execution.
@@ -341,7 +341,7 @@ Security Onion SOC
 Hunt / Cases / Analysis
 ```
 
-## 10.4 Example Security Onion Use Cases
+## 10.4  Security Onion Use Cases
 - Detecting reconnaissance and network scanning generated during authorized lab exercises.
 - Investigating suspicious DNS, HTTP, TLS, SMB, or other protocol activity.
 - Reviewing Suricata alerts and validating detections against packet or flow evidence.
@@ -388,7 +388,7 @@ Windows / Linux / Applications / Selected Network Logs
              Dashboards / Hunt / Analysis
 ```
 
-## 11.3 Example ELK Use Cases
+## 11.3  ELK Use Cases
 
 - Centralize Windows, Linux, application, and infrastructure logs for search and analysis.
 - Build Logstash pipelines to parse raw events and normalize fields.
@@ -533,7 +533,7 @@ Routine updates should include Proxmox hosts, Windows servers and clients, Linux
 
 Consistent naming and address allocation simplify troubleshooting, monitoring, and documentation. Infrastructure systems should use static addresses or DHCP reservations where appropriate.
 
-| **Example Range** | **Recommended Use**                      |
+| ** Range** | **Recommended Use**                      |
 |-------------------|------------------------------------------|
 | .1                | Default gateway                          |
 | .2-.19            | Network infrastructure                   |
@@ -543,9 +543,9 @@ Consistent naming and address allocation simplify troubleshooting, monitoring, a
 | .200-.239         | Security appliances / monitoring systems |
 | .240-.254         | Reserved                                 |
 
-## 20.1 Naming Examples
+## 20.1 Naming s
 
-| **Category**           | **Examples**                         |
+| **Category**           | **s**                         |
 |------------------------|--------------------------------------|
 | Proxmox Hosts          | PVE01, PVE02, PVE03, PVE04           |
 | Domain Controllers     | DC01, DC02                           |
