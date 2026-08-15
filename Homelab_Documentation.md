@@ -529,23 +529,13 @@ Routine updates should include Proxmox hosts, Windows servers and clients, Linux
 | Rollback                | How to restore the prior state if necessary.    |
 | Notes                   | Additional validation or follow-up information. |
 
-# 20. Naming and IP Addressing Standards
+# 20. Naming Standards
 
 Consistent naming and address allocation simplify troubleshooting, monitoring, and documentation. Infrastructure systems should use static addresses or DHCP reservations where appropriate.
 
-| ** Range** | **Recommended Use**                      |
-|-------------------|------------------------------------------|
-| .1                | Default gateway                          |
-| .2-.19            | Network infrastructure                   |
-| .20-.49           | Physical servers                         |
-| .50-.99           | Virtual servers                          |
-| .100-.199         | DHCP clients                             |
-| .200-.239         | Security appliances / monitoring systems |
-| .240-.254         | Reserved                                 |
-
 ## 20.1 Naming s
 
-| **Category**           | **s**                         |
+| **Category**           | **Names**                            |
 |------------------------|--------------------------------------|
 | Proxmox Hosts          | PVE01, PVE02, PVE03, PVE04           |
 | Domain Controllers     | DC01, DC02                           |
