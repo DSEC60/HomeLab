@@ -6,9 +6,9 @@ Technical documentation for a segmented enterprise-style homelab focused on virt
 
 | **Document Owner**         | Daniel Miller                                                 |
 |----------------------------|---------------------------------------------------------------|
-| **Version**                | 1.1                                                           |
+| **Version**                | 1.2                                                           |
 | **Date**                   | August 15, 2026                                               |
-| Primary Security Platforms | Wazuh SIEM / XDR + Security Onion network security monitoring |
+| Primary Security Platforms | Wazuh SIEM / XDR + Security Onion NSM + Elastic / ELK log analytics |
 
 *Purpose: Maintain an accurate, version-controlled record of the homelab architecture, security controls, systems, and operating procedures.*
 
@@ -23,18 +23,19 @@ Technical documentation for a segmented enterprise-style homelab focused on virt
 - [8. Core Virtual Workloads](#8-core-virtual-workloads)
 - [9. Wazuh SIEM and XDR](#9-wazuh-siem-and-xdr)
 - [10. Security Onion Network Security Monitoring](#10-security-onion-network-security-monitoring)
-- [11. Identity and Windows Enterprise Services](#11-identity-and-windows-enterprise-services)
-- [12. Security Tooling and Network Analysis](#12-security-tooling-and-network-analysis)
-- [13. Vulnerability Management Workflow](#13-vulnerability-management-workflow)
-- [14. Security Testing and Blue-Team Validation](#14-security-testing-and-blue-team-validation)
-- [15. Incident Response Procedure](#15-incident-response-procedure)
-- [16. Backup and Recovery](#16-backup-and-recovery)
-- [17. Administrative Security Standards](#17-administrative-security-standards)
-- [18. Patch and Change Management](#18-patch-and-change-management)
-- [19. Naming and IP Addressing Standards](#19-naming-and-ip-addressing-standards)
-- [20. Documentation and Recordkeeping](#20-documentation-and-recordkeeping)
-- [21. Future Development Roadmap](#21-future-development-roadmap)
-- [22. Security Design Principles](#22-security-design-principles)
+- [11. Elastic / ELK Stack](#11-elastic--elk-stack)
+- [12. Identity and Windows Enterprise Services](#12-identity-and-windows-enterprise-services)
+- [13. Security Tooling and Network Analysis](#13-security-tooling-and-network-analysis)
+- [14. Vulnerability Management Workflow](#14-vulnerability-management-workflow)
+- [15. Security Testing and Blue-Team Validation](#15-security-testing-and-blue-team-validation)
+- [16. Incident Response Procedure](#16-incident-response-procedure)
+- [17. Backup and Recovery](#17-backup-and-recovery)
+- [18. Administrative Security Standards](#18-administrative-security-standards)
+- [19. Patch and Change Management](#19-patch-and-change-management)
+- [20. Naming and IP Addressing Standards](#20-naming-and-ip-addressing-standards)
+- [21. Documentation and Recordkeeping](#21-documentation-and-recordkeeping)
+- [22. Future Development Roadmap](#22-future-development-roadmap)
+- [23. Security Design Principles](#23-security-design-principles)
 - [Appendix A. Build and Maintenance Checklist](#appendix-a-build-and-maintenance-checklist)
 - [Appendix B. Document Change Log](#appendix-b-document-change-log)
 
@@ -44,7 +45,7 @@ This document describes the architecture and operating model of a home cybersecu
 - Document the physical and logical network architecture.
 - Record the role of the UniFi gateway, switch, physical servers, and Proxmox virtualization layer.
 - Define segmentation and access-control expectations for management, server, workstation, security-lab, and isolated-lab networks.
-- Document Wazuh as the primary SIEM/XDR platform and Security Onion as the complementary network-security monitoring and threat-hunting platform.
+- Document Wazuh as the primary SIEM/XDR platform, Security Onion as the complementary network-security monitoring and threat-hunting platform, and Elastic/ELK as a standalone centralized logging and analytics environment.
 - Provide repeatable operating procedures for vulnerability management, incident response, logging, backups, and change management.
 - Create a baseline that can be updated as the lab expands.
 
@@ -59,6 +60,7 @@ This document describes the architecture and operating model of a home cybersecu
 | Proxmox VE                  | Primary hypervisor and virtualization platform.                                                                                                                            |
 | Wazuh                       | Primary SIEM and XDR platform for endpoint telemetry, log analysis, alerting, vulnerability visibility, and response workflows.                                            |
 | Security Onion              | Network visibility, intrusion detection, threat hunting, packet/protocol analysis, log management, and case management; complements Wazuh endpoint and SIEM/XDR telemetry. |
+| Elastic / ELK Stack         | Standalone centralized logging and analytics environment for ingestion pipelines, indexed search, dashboards, visualization, and custom log-engineering exercises. |
 | Windows and Linux systems   | Endpoints and servers used for administration, security monitoring, and testing.                                                                                           |
 | Kali Linux / security tools | Authorized security testing, traffic analysis, scanning, and defensive validation.                                                                                         |
 
@@ -127,7 +129,7 @@ The Management VLAN contains infrastructure interfaces such as the UniFi gateway
 
 ## 4.2 Server VLAN
 
-The Server VLAN hosts physical and virtual infrastructure services. Typical workloads include Active Directory, DNS, Windows and Linux servers, Wazuh components, Security Onion management/search roles where appropriate, monitoring services, and future backup or automation systems.
+The Server VLAN hosts physical and virtual infrastructure services. Typical workloads include Active Directory, DNS, Windows and Linux servers, Wazuh components, Security Onion management/search roles where appropriate, Elastic/ELK components, monitoring services, and future backup or automation systems.
 
 ## 4.3 Computer VLAN
 
@@ -248,6 +250,7 @@ The environment can host a mixture of Windows and Linux systems. The following n
 | KALI01     | Authorized security-testing workstation.                                                                     |
 | WAZUH01    | Wazuh SIEM/XDR platform or primary Wazuh server role.                                                        |
 | SO01       | Security Onion network-security monitoring, threat-hunting, and intrusion-detection platform or sensor role. |
+| ELK01      | Standalone Elastic/ELK logging, search, dashboard, and log-pipeline platform.                              |
 | SCAN01     | Vulnerability-scanning workload.                                                                             |
 
 # 9. Wazuh SIEM and XDR
@@ -313,7 +316,7 @@ The two platforms are intentionally used for different but complementary visibil
 ## 10.2 Core Security Onion Technologies
 - Suricata - network intrusion detection and alert generation from monitored traffic.
 - Zeek - protocol analysis and rich network metadata for investigative searches and threat hunting.
-- Elastic components - indexing, searching, and analysis of collected security data within the Security Onion architecture.
+- Elastic components - indexing, searching, and analysis used within the Security Onion architecture; these are distinct from the standalone ELK lab documented in Section 11.
 - Security Onion Console (SOC) - analyst interface for alerts, hunting, dashboards, case management, and related workflows.
 
 ## 10.3 Homelab Network Visibility Architecture
@@ -349,18 +352,76 @@ Hunt / Cases / Analysis
 
 **References:** [Security Onion Solutions – Software](https://securityonionsolutions.com/software) and [Security Onion Documentation](https://docs.securityonion.net/).
 
-# 11. Identity and Windows Enterprise Services
+# 11. Elastic / ELK Stack
+
+The homelab includes a standalone **Elastic/ELK Stack** environment for centralized logging, log engineering, indexed search, dashboards, visualization, and general-purpose security analytics. This environment is intentionally documented separately from Wazuh and Security Onion so each platform has a clear role.
+
+Historically, **ELK** refers to **Elasticsearch, Logstash, and Kibana**. The broader Elastic Stack can also use Elastic Agent or Beats for data collection. In this lab, ELK is primarily used to practice building ingestion pipelines, parsing and normalizing logs, creating dashboards, and performing ad hoc searches across Windows, Linux, application, and selected network data.
+
+## 11.1 Core Elastic / ELK Components
+
+| **Component** | **Homelab Role** |
+|---------------|------------------|
+| Elasticsearch | Stores, indexes, and searches structured and unstructured log and event data. |
+| Logstash | Ingests, parses, transforms, enriches, and routes log data into Elasticsearch or other approved destinations. |
+| Kibana | Provides dashboards, visualizations, search, saved queries, and interactive analysis of indexed data. |
+| Elastic Agent / Beats | Optional collectors used to forward host, service, or application telemetry into the ELK pipeline. |
+
+## 11.2 Homelab ELK Architecture
+
+```text
+Windows / Linux / Applications / Selected Network Logs
+                         |
+                         v
+              Elastic Agent / Beats / Syslog
+                         |
+                         v
+                    Logstash
+              Parse / Normalize / Enrich
+                         |
+                         v
+                  Elasticsearch
+                Index / Store / Search
+                         |
+                         v
+                      Kibana
+             Dashboards / Hunt / Analysis
+```
+
+## 11.3 Example ELK Use Cases
+
+- Centralize Windows, Linux, application, and infrastructure logs for search and analysis.
+- Build Logstash pipelines to parse raw events and normalize fields.
+- Create Kibana dashboards for authentication, system activity, network events, and lab health.
+- Practice structured and full-text searches across large event sets.
+- Compare host activity with firewall, application, or selected network telemetry.
+- Experiment with index design, mappings, retention, and lifecycle-management concepts.
+- Develop reusable saved searches and visualizations for recurring investigations.
+- Create controlled datasets for security analytics and detection-engineering exercises.
+
+## 11.4 Relationship to Wazuh and Security Onion
+
+The three platforms serve complementary purposes:
+
+- **Wazuh** remains the primary SIEM/XDR platform for endpoint-focused detection, file-integrity monitoring, security-configuration assessment, vulnerability visibility, alerting, and response workflows.
+- **Security Onion** provides network-centric security monitoring, Suricata alerts, Zeek metadata, packet evidence, threat hunting, and case-management workflows.
+- **Elastic/ELK** provides a separate general-purpose environment for centralized log ingestion, transformation, search, visualization, and custom analytics.
+
+Selected data sources may be sent to more than one platform when a lab exercise requires correlation, but each platform is maintained as an independent workload. The standalone ELK environment should not be confused with the Wazuh Indexer or with Elastic components used internally by Security Onion.
+
+# 12. Identity and Windows Enterprise Services
 
 The lab can include a Windows Active Directory environment to practice enterprise identity administration and defensive monitoring. Typical exercises include user and group provisioning, Organizational Units, Group Policy, Kerberos, DNS, service accounts, password policy, account lockout, least privilege, and security auditing.
 
 Microsoft cloud services may be integrated for hybrid identity or endpoint-management exercises, including Microsoft Entra ID, Microsoft 365, Exchange Online, Azure, Intune, Conditional Access, and multi-factor authentication where available.
 
-# 12. Security Tooling and Network Analysis
+# 13. Security Tooling and Network Analysis
 
 | **Tool / Platform** | **Lab Use**                                                                                                                                           |
 |---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Wazuh               | Primary SIEM/XDR for endpoint telemetry, file integrity monitoring, vulnerability visibility, alerting, investigation, and endpoint-focused response. |
 | Security Onion      | Network security monitoring, network intrusion detection, threat hunting, packet/protocol analysis, log management, and case management.              |
+| Elastic / ELK Stack | Standalone centralized log ingestion, Logstash parsing/enrichment, Elasticsearch search/indexing, and Kibana dashboards/visualization.                 |
 | Wireshark           | Interactive packet capture and protocol analysis.                                                                                                     |
 | tcpdump             | Command-line packet capture on Linux.                                                                                                                 |
 | Nmap                | Authorized host discovery, port scanning, and service enumeration.                                                                                    |
@@ -370,7 +431,7 @@ Microsoft cloud services may be integrated for hybrid identity or endpoint-manag
 | Python              | Custom defensive utilities such as IDS prototypes and port-scanning tools.                                                                            |
 | PowerShell          | Windows administration, automation, event collection, and security analysis.                                                                          |
 
-# 13. Vulnerability Management Workflow
+# 14. Vulnerability Management Workflow
 
 The lab is designed to support a repeatable vulnerability-management lifecycle rather than one-time scanning. Findings should be validated and prioritized according to technical severity and actual exposure.
 
@@ -392,7 +453,7 @@ The lab is designed to support a repeatable vulnerability-management lifecycle r
 
 **9.** Document the remediation and verification result.
 
-# 14. Security Testing and Blue-Team Validation
+# 15. Security Testing and Blue-Team Validation
 
 Security testing should remain limited to systems owned by or explicitly authorized for the homelab. The preferred workflow uses controlled offensive activity to validate defensive visibility and response.
 
@@ -401,50 +462,51 @@ Security testing should remain limited to systems owned by or explicitly authori
 | Deploy            | Create or restore a test target and place it on the correct VLAN.                                                             |
 | Baseline          | Record IP address, operating system, services, open ports, and expected behavior.                                             |
 | Generate Activity | Perform an authorized scan, authentication test, or simulated attack.                                                         |
-| Detect            | Review Wazuh endpoint alerts, Security Onion network alerts/metadata, Windows/Linux logs, firewall logs, and packet evidence. |
+| Detect            | Review Wazuh endpoint alerts, Security Onion network alerts/metadata, Elastic/ELK searches and dashboards, Windows/Linux logs, firewall logs, and packet evidence. |
 | Investigate       | Identify source, destination, time, technique, affected systems, host telemetry, network evidence, and indicators.            |
 | Respond           | Isolate hosts, block sources, disable accounts, patch weaknesses, or remove persistence as appropriate.                       |
 | Document          | Record the timeline, findings, response actions, and lessons learned.                                                         |
 
-# 15. Incident Response Procedure
+# 16. Incident Response Procedure
 
-## 15.1 Preparation
+## 16.1 Preparation
 
 Maintain logging, monitoring, backups, administrator access, known-good baselines, and tested response tools.
 
-## 15.2 Detection and Analysis
+## 16.2 Detection and Analysis
 
 Review alerts and supporting telemetry to determine whether malicious or unauthorized activity occurred.
 
-## 15.3 Containment
+## 16.3 Containment
 
 Use VLAN isolation, firewall blocks, account disabling, or VM network disconnection to limit impact.
 
-## 15.4 Eradication
+## 16.4 Eradication
 
 Remove malicious files, unauthorized accounts, persistence mechanisms, and vulnerable configurations.
 
-## 15.5 Recovery
+## 16.5 Recovery
 
 Restore secure services, verify normal operation, and monitor for recurrence.
 
-## 15.6 Lessons Learned
+## 16.6 Lessons Learned
 
 Document the incident timeline, indicators, root cause, control gaps, actions performed, and recommended improvements.
 
-# 16. Backup and Recovery
+# 17. Backup and Recovery
 
 Critical configuration and workloads should be backed up outside the primary storage array. RAID protects against some disk failures but does not protect against deletion, corruption, ransomware, or administrative error.
 - Proxmox configuration and critical virtual machines
 - UniFi configuration backups
 - Wazuh configuration and detection content
 - Security Onion configuration, detection content, case data, and deployment documentation as appropriate
+- Elastic/ELK configuration, Logstash pipelines, Kibana saved objects, index templates, and deployment documentation as appropriate
 - Active Directory or other infrastructure configuration
 - Scripts, automation, and custom security tools
 - Network diagrams and documentation
 - Critical vulnerability and incident-response records
 
-# 17. Administrative Security Standards
+# 18. Administrative Security Standards
 - Use separate administrative accounts for privileged tasks when practical.
 - Use strong, unique passwords and MFA wherever supported.
 - Restrict management interfaces to the Management VLAN or other explicitly trusted sources.
@@ -453,9 +515,9 @@ Critical configuration and workloads should be backed up outside the primary sto
 - Monitor privileged logons and administrative changes.
 - Do not expose management interfaces directly to the Internet without a justified and secured design.
 
-# 18. Patch and Change Management
+# 19. Patch and Change Management
 
-Routine updates should include Proxmox hosts, Windows servers and clients, Linux systems, UniFi devices, Wazuh components, Security Onion components, and other security applications. Significant configuration changes should be recorded so that the environment can be troubleshot and restored consistently.
+Routine updates should include Proxmox hosts, Windows servers and clients, Linux systems, UniFi devices, Wazuh components, Security Onion components, Elastic/ELK components, and other security applications. Significant configuration changes should be recorded so that the environment can be troubleshot and restored consistently.
 
 | **Change Record Field** | **Description**                                 |
 |-------------------------|-------------------------------------------------|
@@ -467,7 +529,7 @@ Routine updates should include Proxmox hosts, Windows servers and clients, Linux
 | Rollback                | How to restore the prior state if necessary.    |
 | Notes                   | Additional validation or follow-up information. |
 
-# 19. Naming and IP Addressing Standards
+# 20. Naming and IP Addressing Standards
 
 Consistent naming and address allocation simplify troubleshooting, monitoring, and documentation. Infrastructure systems should use static addresses or DHCP reservations where appropriate.
 
@@ -481,7 +543,7 @@ Consistent naming and address allocation simplify troubleshooting, monitoring, a
 | .200-.239         | Security appliances / monitoring systems |
 | .240-.254         | Reserved                                 |
 
-## 19.1 Naming Examples
+## 20.1 Naming Examples
 
 | **Category**           | **Examples**                         |
 |------------------------|--------------------------------------|
@@ -489,10 +551,10 @@ Consistent naming and address allocation simplify troubleshooting, monitoring, a
 | Domain Controllers     | DC01, DC02                           |
 | Windows Clients        | WIN11-01, WIN11-02                   |
 | Linux Servers          | LNX-SRV01                            |
-| Security Systems       | KALI01, WAZUH01, SO01, IDS01, SCAN01 |
+| Security Systems       | KALI01, WAZUH01, SO01, ELK01, IDS01, SCAN01 |
 | Network Infrastructure | UCG-MAX01, USW-16-01                 |
 
-# 20. Documentation and Recordkeeping
+# 21. Documentation and Recordkeeping
 - Physical network diagram
 - Logical network diagram
 - VLAN and subnet table
@@ -502,20 +564,21 @@ Consistent naming and address allocation simplify troubleshooting, monitoring, a
 - Firewall-rule documentation
 - Switch-port assignments
 - Backup and recovery procedures
-- Security-tool configurations, including Wazuh and Security Onion
+- Security-tool configurations, including Wazuh, Security Onion, and Elastic/ELK
 - Vulnerability reports
 - Incident-response reports
 - Change log
 
 Passwords, private keys, API tokens, recovery codes, and other secrets should not be stored in general-purpose lab documentation. Use a dedicated secrets-management or password-management solution instead.
 
-# 21. Future Development Roadmap
+# 22. Future Development Roadmap
 - Complete and document the four-node Proxmox cluster.
 - Deploy centralized Proxmox backup infrastructure.
 - Expand Wazuh coverage to all supported Windows and Linux workloads.
 - Develop custom Wazuh detection rules and response playbooks.
 - Operationalize Security Onion network visibility for selected VLANs and validate Suricata and Zeek telemetry.
 - Develop Security Onion threat-hunting queries, Suricata detection tuning, and investigation/case workflows.
+- Build and tune Elastic/ELK ingestion pipelines, dashboards, saved searches, and retention policies for selected lab data sources.
 - Build an Active Directory attack-and-defense range.
 - Implement dedicated red-team and blue-team lab segments if needed.
 - Automate host deployment and configuration with PowerShell, Python, or Ansible.
@@ -523,7 +586,7 @@ Passwords, private keys, API tokens, recovery codes, and other secrets should no
 - Add UPS monitoring and graceful shutdown procedures.
 - Map selected detection exercises to MITRE ATT&CK techniques.
 
-# 22. Security Design Principles
+# 23. Security Design Principles
 
 | **Principle**    | **Application in the Homelab**                                                                                                             |
 |------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
@@ -531,7 +594,7 @@ Passwords, private keys, API tokens, recovery codes, and other secrets should no
 | Least Privilege  | Grant only the network and administrative access required for a task.                                                                      |
 | Default Deny     | Block inter-zone communication unless a documented requirement exists.                                                                     |
 | Defense in Depth | Combine network, identity, endpoint, logging, vulnerability, and administrative controls.                                                  |
-| Visibility       | Collect endpoint telemetry with Wazuh and network telemetry with Security Onion so activity can be correlated, detected, and investigated. |
+| Visibility       | Collect endpoint telemetry with Wazuh, network telemetry with Security Onion, and centralized searchable logs in Elastic/ELK so activity can be correlated, detected, and investigated. |
 | Repeatability    | Use naming standards, documentation, change records, and repeatable test procedures.                                                       |
 
 # Appendix A. Build and Maintenance Checklist
@@ -548,6 +611,10 @@ Passwords, private keys, API tokens, recovery codes, and other secrets should no
 - [ ] Security Onion monitoring interface receiving the intended mirrored/TAP traffic.
 - [ ] Suricata alerts and Zeek network metadata visible in Security Onion SOC.
 - [ ] Wazuh and Security Onion evidence can be correlated during a test investigation.
+- [ ] ELK01 receives logs from at least one Windows or Linux source.
+- [ ] Logstash or direct ingestion parsing is validated for selected data sources.
+- [ ] Kibana dashboards and saved searches are backed up or exportable.
+- [ ] Elasticsearch storage and retention settings are documented.
 - [ ] Vulnerability scan schedule or manual procedure documented.
 - [ ] Critical systems included in backup plan.
 - [ ] Restore procedure tested for at least one workload.
@@ -560,3 +627,4 @@ Passwords, private keys, API tokens, recovery codes, and other secrets should no
 |-------------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1.0         | August 14, 2026 | Initial consolidated homelab documentation. Wazuh identified as the primary SIEM and XDR platform.                                                                                                                      |
 | 1.1         | August 15, 2026 | Added Security Onion as the complementary network-security monitoring and threat-hunting platform; documented Suricata, Zeek, traffic-monitoring architecture, investigation use cases, and updated tooling/checklists. |
+| 1.2         | August 15, 2026 | Added a standalone Elastic/ELK section covering Elasticsearch, Logstash, Kibana, ingestion architecture, log analytics use cases, integrations, backups, naming, and maintenance checks. |
