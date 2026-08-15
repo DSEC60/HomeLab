@@ -12,12 +12,12 @@
 *Purpose: Maintain an accurate, printable record of the homelab architecture, security controls, systems, and operating procedures.*
 
 ## 1. Document Purpose and Scope
-This document describes the architecture and operating model of a home cybersecurity lab built to support hands-on learning in systems administration, virtualization, network defense, vulnerability management, security monitoring, and incident response. The lab is intended to resemble a small enterprise environment while preserving strong isolation between trusted infrastructure and higher-risk testing systems.
+This document describes the architecture and operating model of home lab built to support cybersecurity training and hands on learning in systems administration, virtualization, network defense, vulnerability management, security monitoring, and incident response. The lab is intended to resemble a small enterprise environment while preserving strong isolation between trusted infrastructure and higher-risk testing systems.
 
-- Document the physical and logical network architecture.
+ Document the physical and logical network architecture.
 - Record the role of the UniFi gateway, switch, physical servers, and Proxmox virtualization layer.
-- Define segmentation and access-control expectations for management, server, workstation, security-lab, and isolated-lab networks.
-- Document Wazuh as the primary SIEM and XDR platform.
+- Define segmentation and access control expectations for management, server, workstation, security lab, and isolated lab networks.
+- Document Wazuh
 - Provide repeatable operating procedures for vulnerability management, incident response, logging, backups, and change management.
 - Create a baseline that can be updated as the lab expands.
 
