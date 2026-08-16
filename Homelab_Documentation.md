@@ -407,8 +407,6 @@ The three platforms serve complementary purposes:
 - **Security Onion** provides network-centric security monitoring, Suricata alerts, Zeek metadata, packet evidence, threat hunting, and case-management workflows.
 - **Elastic/ELK** provides a separate general-purpose environment for centralized log ingestion, transformation, search, visualization, and custom analytics.
 
-Selected data sources will be sent to more than one platform when a lab exercise requires correlation, but each platform is maintained as an independent workload. The standalone ELK environment should not be confused with the Wazuh Indexer or with Elastic components used internally by Security Onion.
-
 # 12. Identity and Windows Enterprise Services
 
 The lab will include a Windows Active Directory environment to practice enterprise identity administration and defensive monitoring. Typical exercises include user and group provisioning, Organizational Units, Group Policy, Kerberos, DNS, service accounts, password policy, account lockout, least privilege, and security auditing.
