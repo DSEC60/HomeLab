@@ -8,7 +8,7 @@ Technical documentation for a segmented enterprise-style homelab focused on virt
 |----------------------------|---------------------------------------------------------------|
 | **Version**                | 1.2                                                           |
 | **Date**                   | August 15, 2026                                               |
-| Primary Security Platforms | Wazuh SIEM / XDR + Security Onion NSM + Elastic / ELK log analytics |
+| Primary Security Platforms | Wazuh / XDR + Security Onion NSM + Elastic / ELK log analytics |
 
 *Purpose: Maintain an accurate, version-controlled record of the homelab architecture, security controls, systems, and operating procedures.*
 
